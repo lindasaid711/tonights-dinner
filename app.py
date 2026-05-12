@@ -110,7 +110,7 @@ def run_react_agent(state: dict, status=None) -> dict:
 
     # Haiku is 5x faster than Sonnet for tool-calling loops — sufficient for
     # recipe search and constraint filtering. Sonnet is reserved for reflect.
-    llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=2048)
+    llm = ChatAnthropic(model="claude-sonnet-4-6", max_tokens=2048)
     llm_with_tools = llm.bind_tools([search_recipes, filter_by_constraints])
 
     messages = [
