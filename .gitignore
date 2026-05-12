@@ -1,0 +1,11 @@
+.env
+.streamlit/secrets.toml
+data/*.db
+data/receipt_b64.txt
+__pycache__/
+*.pyc
+.venv/
+.venv311/
+.DS_Store
+.claude/
+.langgraph_api/

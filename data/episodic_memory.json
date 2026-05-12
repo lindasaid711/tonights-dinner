@@ -1,0 +1,208 @@
+[
+  {
+    "date": "2026-04-27",
+    "recommendations": [
+      {
+        "name": "Lemon Herb Roasted Chicken",
+        "primary_protein": "chicken",
+        "key_ingredients": [
+          "chicken thighs",
+          "lemon",
+          "rosemary",
+          "garlic",
+          "olive oil"
+        ],
+        "cook_time_min": 45,
+        "substitutions": []
+      },
+      {
+        "name": "Beef and Vegetable Stir Fry",
+        "primary_protein": "beef",
+        "key_ingredients": [
+          "beef sirloin",
+          "broccoli",
+          "bell peppers",
+          "ginger",
+          "tamari"
+        ],
+        "cook_time_min": 20,
+        "substitutions": []
+      },
+      {
+        "name": "Pan Seared Salmon with Capers",
+        "primary_protein": "salmon",
+        "key_ingredients": [
+          "salmon fillet",
+          "capers",
+          "dill",
+          "lemon",
+          "butter"
+        ],
+        "cook_time_min": 15,
+        "substitutions": []
+      }
+    ],
+    "feedback": {
+      "Lemon Herb Roasted Chicken": "up",
+      "Beef and Vegetable Stir Fry": "up",
+      "Pan Seared Salmon with Capers": "down"
+    },
+    "feedback_reasons": {
+      "Pan Seared Salmon with Capers": "Not in the mood for fish tonight"
+    }
+  },
+  {
+    "date": "2026-04-30",
+    "recommendations": [
+      {
+        "name": "Pork Tenderloin with Apple and Rosemary",
+        "primary_protein": "pork",
+        "key_ingredients": [
+          "pork tenderloin",
+          "apple",
+          "rosemary",
+          "dijon mustard",
+          "olive oil"
+        ],
+        "cook_time_min": 35,
+        "substitutions": []
+      },
+      {
+        "name": "Garlic Butter Shrimp with Rice",
+        "primary_protein": "shrimp",
+        "key_ingredients": [
+          "shrimp",
+          "garlic",
+          "jasmine rice",
+          "parsley",
+          "lemon"
+        ],
+        "cook_time_min": 20,
+        "substitutions": []
+      },
+      {
+        "name": "Spanish Omelette",
+        "primary_protein": "eggs",
+        "key_ingredients": [
+          "eggs",
+          "potatoes",
+          "onion",
+          "olive oil",
+          "paprika"
+        ],
+        "cook_time_min": 25,
+        "substitutions": []
+      }
+    ],
+    "feedback": {
+      "Pork Tenderloin with Apple and Rosemary": "up",
+      "Garlic Butter Shrimp with Rice": "up",
+      "Spanish Omelette": "up"
+    },
+    "feedback_reasons": {}
+  },
+  {
+    "date": "2026-05-03",
+    "recommendations": [
+      {
+        "name": "Lamb Chops with Chimichurri",
+        "primary_protein": "lamb",
+        "key_ingredients": [
+          "lamb chops",
+          "parsley",
+          "garlic",
+          "red wine vinegar",
+          "olive oil"
+        ],
+        "cook_time_min": 25,
+        "substitutions": []
+      },
+      {
+        "name": "Tofu Coconut Curry",
+        "primary_protein": "tofu",
+        "key_ingredients": [
+          "tofu",
+          "coconut milk",
+          "red curry paste",
+          "sweet potato",
+          "lime"
+        ],
+        "cook_time_min": 30,
+        "substitutions": []
+      },
+      {
+        "name": "Chicken Tikka Masala",
+        "primary_protein": "chicken",
+        "key_ingredients": [
+          "chicken breast",
+          "tomatoes",
+          "coconut cream",
+          "garam masala",
+          "ginger"
+        ],
+        "cook_time_min": 35,
+        "substitutions": []
+      }
+    ],
+    "feedback": {
+      "Lamb Chops with Chimichurri": "down",
+      "Tofu Coconut Curry": "up",
+      "Chicken Tikka Masala": "up"
+    },
+    "feedback_reasons": {
+      "Lamb Chops with Chimichurri": "Too gamey, don't enjoy lamb"
+    }
+  },
+  {
+    "date": "2026-05-07",
+    "recommendations": [
+      {
+        "name": "Beef Bulgogi Bowl",
+        "primary_protein": "beef",
+        "key_ingredients": [
+          "beef sirloin",
+          "tamari",
+          "pear",
+          "sesame oil",
+          "jasmine rice"
+        ],
+        "cook_time_min": 25,
+        "substitutions": []
+      },
+      {
+        "name": "Grilled Salmon with Asparagus",
+        "primary_protein": "salmon",
+        "key_ingredients": [
+          "salmon fillet",
+          "asparagus",
+          "lemon",
+          "dill",
+          "olive oil"
+        ],
+        "cook_time_min": 20,
+        "substitutions": []
+      },
+      {
+        "name": "Red Lentil Soup",
+        "primary_protein": "lentils",
+        "key_ingredients": [
+          "red lentils",
+          "tomatoes",
+          "cumin",
+          "coriander",
+          "lemon"
+        ],
+        "cook_time_min": 30,
+        "substitutions": []
+      }
+    ],
+    "feedback": {
+      "Beef Bulgogi Bowl": "up",
+      "Grilled Salmon with Asparagus": "down",
+      "Red Lentil Soup": "up"
+    },
+    "feedback_reasons": {
+      "Grilled Salmon with Asparagus": "Had salmon earlier this week already"
+    }
+  }
+]
