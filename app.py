@@ -31,6 +31,7 @@ st.set_page_config(
     page_title="Tonight's Dinner",
     page_icon="🍽️",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 
@@ -211,10 +212,30 @@ with st.sidebar:
     rate = metrics.get("thumbs_up_rate", 0.0)
     col2.metric("Thumbs up", f"{rate:.0%}")
 
+    st.divider()
+    with st.expander("🎮 Demo controls"):
+        st.caption("Use these to reset the app state during a demo.")
+        if st.button("▶ Show onboarding from scratch", key="reset_onboarding"):
+            save_json(PROFILE_FILE, {})
+            st.session_state.profile_cache = {}
+            st.session_state.flow_stage = None
+            st.session_state.messages = []
+            st.session_state.agent_state = {}
+            st.session_state.tool_call_log = []
+            st.rerun()
+        if st.button("↺ Reset to 4 seed sessions", key="reset_sessions"):
+            # Re-run seed logic inline without subprocess
+            from seed_demo import SEED_SESSIONS, compute_metrics
+            save_json(EPISODIC_FILE, SEED_SESSIONS)
+            save_json(METRICS_FILE, compute_metrics(SEED_SESSIONS))
+            st.success("Reset to 4 sessions — ready for live demo session 5.")
+            st.rerun()
+
 
 # ── Main panel title ──────────────────────────────────────────────────────────
 
 st.title("🍽️ Tonight's Dinner")
+st.caption("Your personal dinner agent — learns your household's taste over time.")
 
 
 # ── Bootstrap ────────────────────────────────────────────────────────────────
