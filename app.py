@@ -60,6 +60,16 @@ if "feedback_reasons" not in st.session_state:
     st.session_state.feedback_reasons = {}
 if "profile_cache" not in st.session_state:
     st.session_state.profile_cache = load_json(PROFILE_FILE, {})
+if "selected_foods" not in st.session_state:
+    st.session_state.selected_foods = []
+
+FOOD_EMOJIS = {
+    "Chicken": "🍗", "Beef": "🥩", "Salmon": "🐟", "Pasta": "🍝",
+    "Rice": "🍚", "Pizza": "🍕", "Tacos": "🌮", "Curry": "🍛",
+    "Stir-fry": "🥘", "Soup": "🍜", "Salad": "🥗", "Steak": "🥩",
+    "Shrimp": "🍤", "Tofu": "🫘", "Eggs": "🍳", "Lentils": "🫘",
+    "Pork": "🍖", "Lamb": "🍖", "Burgers": "🍔", "Sushi": "🍱",
+}
 
 
 # ── Helper: add a message to chat history ─────────────────────────────────────
@@ -483,6 +493,46 @@ if st.session_state.flow_stage == "onboarding_inventory":
         st.rerun()
 
 
+# ── Food preference card picker ───────────────────────────────────────────────
+# Shown during onboarding step 3. Displays all 20 foods as clickable emoji cards
+# in a 4-column grid. Selected cards highlight in orange. Confirm button appears
+# once exactly 3 are chosen.
+
+if st.session_state.flow_stage == "onboarding_preferences":
+    selected = st.session_state.selected_foods
+    st.markdown(f"**{len(selected)}/3 selected**")
+
+    cols = st.columns(4)
+    for i, food in enumerate(TWENTY_FOODS):
+        emoji = FOOD_EMOJIS.get(food, "🍽️")
+        label = f"{emoji} {food}"
+        is_selected = food in selected
+        btn_type = "primary" if is_selected else "secondary"
+        if cols[i % 4].button(label, key=f"food_{food}", type=btn_type, use_container_width=True):
+            if is_selected:
+                st.session_state.selected_foods.remove(food)
+            elif len(selected) < 3:
+                st.session_state.selected_foods.append(food)
+            st.rerun()
+
+    if len(selected) == 3:
+        st.markdown(f"**Selected:** {' · '.join(selected)}")
+        if st.button("Confirm →", type="primary"):
+            profile = st.session_state.agent_state.get("user_profile", {})
+            profile["top_3_foods"] = selected
+            st.session_state.agent_state["user_profile"] = profile
+            save_json(PROFILE_FILE, profile)
+            st.session_state.profile_cache = profile
+            st.session_state.agent_state["onboarding_complete"] = True
+            st.session_state.selected_foods = []
+            st.session_state.flow_stage = "onboarding_inventory"
+            add_assistant_msg(
+                "Perfect — profile saved! **What ingredients do you have available tonight?**\n\n"
+                "List what's in your fridge and pantry, or upload a receipt photo below."
+            )
+            st.rerun()
+
+
 # ── Inventory confirmation ────────────────────────────────────────────────────
 # Shows the parsed/typed inventory in an editable text area. The user can
 # clean it up (remove non-food items from a receipt, fix typos, add things)
@@ -542,37 +592,15 @@ if user_input:
             "(e.g. *mushrooms, olives* — or type *none*)"
         )
 
-    # Onboarding step 2: collect dislikes, then show the food preference list
+    # Onboarding step 2: collect dislikes, then show food card picker
     elif stage == "onboarding_dislikes":
         profile["dislikes"] = user_input
         st.session_state.agent_state["user_profile"] = profile
-        food_list = "\n".join(f"{i+1}. {food}" for i, food in enumerate(TWENTY_FOODS))
+        st.session_state.selected_foods = []
         st.session_state.flow_stage = "onboarding_preferences"
-        add_assistant_msg(
-            f"Great. From the list below, **enter the numbers of your top 3 favourite "
-            f"dinner types** (e.g. *1, 5, 12*):\n\n{food_list}"
-        )
+        add_assistant_msg("Great! Pick your **top 3 favourite dinner types** from the options below:")
 
-    # Onboarding step 3: parse the 3 food numbers and save the profile to disk
-    elif stage == "onboarding_preferences":
-        selected = []
-        for part in re.split(r"[\s,;]+", user_input):
-            try:
-                idx = int(part.strip()) - 1
-                if 0 <= idx < len(TWENTY_FOODS) and len(selected) < 3:
-                    selected.append(TWENTY_FOODS[idx])
-            except ValueError:
-                pass
-        profile["top_3_foods"] = selected
-        st.session_state.agent_state["user_profile"] = profile
-        # Save to disk — this is what makes onboarding "complete" on next launch
-        save_json(PROFILE_FILE, profile)
-        st.session_state.agent_state["onboarding_complete"] = True
-        st.session_state.flow_stage = "onboarding_inventory"
-        add_assistant_msg(
-            "Perfect — profile saved! **What ingredients do you have available tonight?**\n\n"
-            "List what's in your fridge and pantry, or upload a receipt photo below."
-        )
+    # onboarding_preferences is handled by card buttons below, not chat input
 
     # Onboarding step 4: store inventory text, show confirmation before searching
     elif stage == "onboarding_inventory":
