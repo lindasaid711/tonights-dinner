@@ -108,7 +108,9 @@ def run_react_agent(state: dict, status=None) -> dict:
                     raise
                 time.sleep(2 ** attempt)
 
-    llm = ChatAnthropic(model="claude-sonnet-4-6", max_tokens=4096)
+    # Haiku is 5x faster than Sonnet for tool-calling loops — sufficient for
+    # recipe search and constraint filtering. Sonnet is reserved for reflect.
+    llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=1024)
     llm_with_tools = llm.bind_tools([search_recipes, filter_by_constraints])
 
     messages = [
@@ -119,7 +121,7 @@ def run_react_agent(state: dict, status=None) -> dict:
     tool_calls_log = []
     response = None
 
-    for _ in range(12):
+    for _ in range(7):
         response = invoke_with_retry(llm_with_tools, messages)
         messages.append(response)
 

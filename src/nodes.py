@@ -207,7 +207,7 @@ def react_agent(state: AgentState) -> dict:
         state.get("recent_history", []),
     )
 
-    llm = ChatAnthropic(model="claude-sonnet-4-6", max_tokens=4096)
+    llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=1024)
     llm_with_tools = llm.bind_tools([search_recipes, filter_by_constraints])
 
     messages = [
@@ -216,7 +216,7 @@ def react_agent(state: AgentState) -> dict:
     ]
     response = None
 
-    for _ in range(12):
+    for _ in range(7):
         response = llm_with_tools.invoke(messages)
         messages.append(response)
 
