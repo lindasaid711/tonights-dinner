@@ -207,8 +207,13 @@ with st.sidebar:
 
     st.divider()
     metrics = load_json(METRICS_FILE, {})
+    prev_sessions = st.session_state.get("prev_sessions", metrics.get("sessions", 0))
+    sessions_now = metrics.get("sessions", 0)
+    session_delta = sessions_now - prev_sessions if sessions_now > prev_sessions else None
+    st.session_state.prev_sessions = sessions_now
+
     col1, col2 = st.columns(2)
-    col1.metric("Sessions", metrics.get("sessions", 0))
+    col1.metric("Sessions", sessions_now, delta=f"+{session_delta}" if session_delta else None)
     rate = metrics.get("thumbs_up_rate", 0.0)
     col2.metric("Thumbs up", f"{rate:.0%}")
 
@@ -236,6 +241,18 @@ with st.sidebar:
 
 st.title("🍽️ Tonight's Dinner")
 st.caption("Your personal dinner agent — learns your household's taste over time.")
+
+# Show onboarding progress bar
+onboarding_steps = {
+    "onboarding_allergies": (1, "Step 1 of 4 — Allergies"),
+    "onboarding_dislikes": (2, "Step 2 of 4 — Dislikes"),
+    "onboarding_preferences": (3, "Step 3 of 4 — Favourite foods"),
+    "onboarding_inventory": (4, "Step 4 of 4 — Tonight's ingredients"),
+    "confirming_inventory": (4, "Step 4 of 4 — Confirm ingredients"),
+}
+if st.session_state.flow_stage in onboarding_steps:
+    step_num, label = onboarding_steps[st.session_state.flow_stage]
+    st.progress(step_num / 4, text=label)
 
 
 # ── Bootstrap ────────────────────────────────────────────────────────────────
@@ -421,7 +438,10 @@ if st.session_state.flow_stage == "collecting_feedback":
                 save_feedback(st.session_state.agent_state)
                 reflect(st.session_state.agent_state)
                 # Sync profile cache so sidebar shows new learned rules immediately
-                st.session_state.profile_cache = load_json(PROFILE_FILE, {})
+                updated_profile = load_json(PROFILE_FILE, {})
+                st.session_state.profile_cache = updated_profile
+                if updated_profile.get("procedural_rules"):
+                    st.balloons()
                 add_assistant_msg(
                     "Thanks for the feedback — saved! Check the sidebar to see your updated "
                     "session count and any new learned rules."
