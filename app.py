@@ -110,7 +110,7 @@ def run_react_agent(state: dict, status=None) -> dict:
 
     # Haiku is 5x faster than Sonnet for tool-calling loops — sufficient for
     # recipe search and constraint filtering. Sonnet is reserved for reflect.
-    llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=1024)
+    llm = ChatAnthropic(model="claude-haiku-4-5-20251001", max_tokens=2048)
     llm_with_tools = llm.bind_tools([search_recipes, filter_by_constraints])
 
     messages = [
@@ -129,12 +129,27 @@ def run_react_agent(state: dict, status=None) -> dict:
             break
 
         for tc in response.tool_calls:
-            if tc["name"] == "search_recipes":
-                result = search_recipes.invoke(tc["args"])
-            elif tc["name"] == "filter_by_constraints":
-                result = filter_by_constraints.invoke(tc["args"])
-            else:
-                result = f"unknown tool: {tc['name']}"
+            try:
+                if tc["name"] == "search_recipes":
+                    args = tc["args"]
+                    query = args.get("query", "") if isinstance(args, dict) else str(args)
+                    result = search_recipes.invoke({"query": str(query)})
+                elif tc["name"] == "filter_by_constraints":
+                    args = tc["args"]
+                    if isinstance(args, dict):
+                        names = args.get("recipe_names", [])
+                        excluded = args.get("excluded_ingredients", [])
+                        if isinstance(names, str):
+                            names = [names]
+                        if isinstance(excluded, str):
+                            excluded = [excluded]
+                    else:
+                        names, excluded = [], []
+                    result = filter_by_constraints.invoke({"recipe_names": names, "excluded_ingredients": excluded})
+                else:
+                    result = f"unknown tool: {tc['name']}"
+            except Exception as e:
+                result = f"tool error: {str(e)}"
 
             tool_calls_log.append({
                 "tool": tc["name"],
